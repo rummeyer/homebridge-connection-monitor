@@ -14,6 +14,8 @@ export interface Target {
   host: string;
   /** The dashboard's icon, guessed from the name and address. */
   icon: TargetIcon;
+  /** Whether HomeKit has an occupancy sensor for it, occupied while it answers. */
+  sensor: boolean;
 }
 
 export interface Config {
@@ -92,7 +94,7 @@ export function parseConfig(raw: unknown): { config: Config; problems: string[] 
           continue;
         }
         seen.add(name);
-        targets.push({ name, host, icon: guessIcon(name, host) });
+        targets.push({ name, host, icon: guessIcon(name, host), sensor: entry.sensor !== false });
       }
     }
   }

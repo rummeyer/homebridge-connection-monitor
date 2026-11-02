@@ -1,6 +1,6 @@
 /**
- * The settings page's form, as Synology Monitor's: the devices, each just a
- * name and an IP address, and below them the General settings with the link
+ * The settings page's form, as Synology Monitor's: the devices, each a name,
+ * an IP address and whether it is an occupancy sensor, and below them the General settings with the link
  * to the dashboard under its switch.
  *
  * Drawn here from the config as Homebridge has it, rather than with
@@ -19,7 +19,8 @@
   const css = `
   .cm-section { margin-bottom: 1.25rem; }
   .cm-section > h6 { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; opacity: .65; margin-bottom: .5rem; }
-  .cm-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: .5rem; align-items: start; margin-bottom: .5rem; }
+  .cm-row { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: .5rem; align-items: center; margin-bottom: .5rem; }
+  .cm-row .form-check { margin: 0; white-space: nowrap; }
   .cm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .75rem 1rem; }
   .cm-help { font-size: .78rem; opacity: .65; margin-top: .2rem; }
   .cm-error { font-size: .78rem; color: #d64545; margin-top: .2rem; }
@@ -75,10 +76,10 @@
       configs.push({ platform: PLATFORM, name: 'Connection Monitor', targets: [] });
     }
     const config = configs[0];
-    // Only a name and an address per device: what else an earlier version saved is dropped.
+    // A name, an address and the sensor per device: what else an earlier version saved is dropped.
     config.targets = (Array.isArray(config.targets) ? config.targets : [])
       .filter((target) => target && typeof target === 'object')
-      .map((target) => ({ name: String(target.name ?? ''), host: String(target.host ?? '') }));
+      .map((target) => ({ name: String(target.name ?? ''), host: String(target.host ?? ''), ...(target.sensor === false ? { sensor: false } : {}) }));
     let pending;
 
     /** Hands the config to Homebridge, a moment after the last change. */
@@ -136,6 +137,12 @@
           el('div', { class: 'cm-row' },
             text(target.name, 'Router', (value) => { target.name = value; check(); changed(); }),
             text(target.host, '192.168.1.1', (value) => { target.host = value.trim(); check(); changed(); }),
+            el('div', { class: 'form-check' },
+              el('input', {
+                class: 'form-check-input', type: 'checkbox', id: `cm-sensor-${index}`, checked: target.sensor !== false,
+                onchange: (e) => { setOrDrop(target, 'sensor', e.target.checked, true); changed(); },
+              }),
+              el('label', { class: 'form-check-label', for: `cm-sensor-${index}` }, 'Occupancy sensor')),
             el('button', {
               type: 'button', class: 'btn btn-sm btn-outline-danger', title: `Delete ${target.name}`,
               onclick: () => { config.targets.splice(index, 1); changed(); render(); },
@@ -145,7 +152,7 @@
       return el('div', { class: 'cm-section' },
         el('h6', {}, 'Devices'),
         config.targets.length
-          ? el('div', { class: 'cm-row' }, el('div', { class: 'cm-help' }, 'Name'), el('div', { class: 'cm-help' }, 'IP address'), el('span'))
+          ? el('div', { class: 'cm-row' }, el('div', { class: 'cm-help' }, 'Name'), el('div', { class: 'cm-help' }, 'IP address'), el('span'), el('span'))
           : el('p', { class: 'text-muted' }, 'No devices yet. Add each with a name and its IP address.'),
         rows,
         el('button', {
@@ -156,7 +163,7 @@
             container.querySelectorAll('.cm-row input')[2 * (config.targets.length - 1)]?.focus();
           },
         }, '+ Add'),
-        el('div', { class: 'cm-help mt-2' }, 'Each is an occupancy sensor in HomeKit, occupied while it answers pings, and on the dashboard. Its data is kept by its name.'));
+        el('div', { class: 'cm-help mt-2' }, 'Each is on the dashboard, its data kept by its name; with Occupancy sensor ticked, also in HomeKit, occupied while it answers pings.'));
     }
 
     /** The dashboard's address while it is switched on: this machine's, or the one the Homebridge UI was opened with. */

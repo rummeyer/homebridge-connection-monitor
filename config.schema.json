@@ -32,6 +32,12 @@
               "type": "string",
               "required": true,
               "placeholder": "192.168.1.1"
+            },
+            "sensor": {
+              "title": "Occupancy sensor",
+              "type": "boolean",
+              "default": true,
+              "description": "In HomeKit, occupied while it answers."
             }
           }
         }
@@ -93,7 +99,8 @@
           "flex-flow": "row wrap",
           "items": [
             "targets[].name",
-            "targets[].host"
+            "targets[].host",
+            "targets[].sensor"
           ]
         }
       ]

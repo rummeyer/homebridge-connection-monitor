@@ -110,13 +110,13 @@ test('rounds older than rawDays fold into their hour, replacing one from Smokepi
   store.close();
 });
 
-test('settings: defaults for what is missing, each target a name and an address, its icon guessed', () => {
+test('settings: defaults for what is missing, each target a name and an address, its icon guessed, a sensor unless unticked', () => {
   const { config, problems } = parseConfig({
     platform: 'ConnectionMonitor',
-    targets: [{ name: 'NAS', host: '10.0.1.201' }, { name: 'Phone', host: '10.0.1.50', icon: 'router' }, { host: 'x' }],
+    targets: [{ name: 'NAS', host: '10.0.1.201' }, { name: 'Phone', host: '10.0.1.50', icon: 'router', sensor: false }, { host: 'x' }],
     pings: 0,
   });
-  assert.deepEqual(config.targets.map((t) => [t.name, t.host, t.icon]), [['NAS', '10.0.1.201', 'server'], ['Phone', '10.0.1.50', 'device']]);
+  assert.deepEqual(config.targets.map((t) => [t.name, t.host, t.icon, t.sensor]), [['NAS', '10.0.1.201', 'server', true], ['Phone', '10.0.1.50', 'device', false]]);
   assert.deepEqual([config.pings, config.stepSeconds, config.port, config.dashboard], [20, 60, 8584, true]);
   assert.equal(problems.length, 1);
   assert.deepEqual(parseConfig({}).config.targets, [], 'no targets until some are set up');

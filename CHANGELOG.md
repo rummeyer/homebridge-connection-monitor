@@ -14,8 +14,9 @@ Connection Monitor is a Homebridge plugin now: **homebridge-connection-monitor**
 
 - An **occupancy sensor** in HomeKit per device: occupied from the first
   ping that comes back, not occupied once a whole round went unanswered.
+  Each device can do without one.
 - A settings page in the Homebridge UI, as Synology Monitor's: the devices,
-  each just a name and an IP address, and General with the link to the
+  each a name, an IP address and an Occupancy sensor tick box, and General with the link to the
   dashboard under its switch, how often, how many pings and how long what
   is kept.
 
