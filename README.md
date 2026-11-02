@@ -150,6 +150,13 @@ Homebridge: the plugin's bridge settings in the Homebridge UI, or
 **+ Add** each device: a name, its IP address, and how it is in HomeKit. The router and a server on the internet, such
 as `8.8.4.4`, are a good start.
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/settings-dark.png">
+    <img src="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/settings-light.png" alt="The plugin's settings: the devices Router, Internet and Diskstation, each a name, an IP address and how it is in HomeKit — the Internet as an occupancy sensor, the others not in HomeKit — with Add, and General with the Dashboard switch, its link and its port, the round and pings per round, and how long rounds and hours are kept" width="560">
+  </picture>
+</p>
+
 **2. Fixed addresses.** A device whose address changes is pinged at the wrong
 one. Give each a fixed address in the router — on a FRITZ!Box, *Home
 Network → Network → the device → Always assign this IPv4 address*.
