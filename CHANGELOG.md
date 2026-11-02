@@ -22,6 +22,8 @@ Connection Monitor is a Homebridge plugin now: **homebridge-connection-monitor**
 
 ### Changed
 
+- A new icon: a router before a latency chart, with a magnifier on the
+  network.
 - The pings go out through the system's own `ping`, one per target, all at
   once: **fping is no longer needed**.
 - The data is kept in `connection-monitor/connection-monitor.db` in
