@@ -55,6 +55,7 @@ Nothing to install beside it: the pings go out through the system's own
 - [Coming from Connection Monitor 1](#coming-from-connection-monitor-1)
 - [Troubleshooting](#troubleshooting)
 - [Support](#support)
+- [Credits](#credits)
 - [Licence](#licence)
 
 ## In the Home app
@@ -284,6 +285,18 @@ If the plugin is useful to you, you can support its development:
 </p>
 
 The Homebridge UI shows the same link behind the plugin's **Donate** button.
+
+## Credits
+
+Connection Monitor owes its idea and its look to
+[**Smokeping**](https://oss.oetiker.ch/smokeping/) by **Tobias Oetiker**:
+the pings sent in rounds as its FPing probe sends them, the median drawn as a
+line coloured by loss, and the spread of the pings as the smoke around it.
+None of Smokeping's code is in it — it is written anew for Homebridge — but
+without Smokeping it would not look the way it does. Taking over its
+history reads its RRD files with the RRDs Perl module Smokeping itself uses.
+
+Thank you, Tobias, and everyone who has worked on Smokeping.
 
 ## Licence
 
