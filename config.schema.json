@@ -1,0 +1,129 @@
+{
+  "pluginAlias": "ConnectionMonitor",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Pings each target every minute. A target with a sensor is an occupancy sensor in HomeKit, occupied while it answers. The dashboard shows latency and loss at http://&lt;this machine&gt;:8584/.",
+  "footerDisplay": "Data is kept in the connection-monitor folder of Homebridge's storage folder.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "Connection Monitor",
+        "required": true
+      },
+      "targets": {
+        "title": "Targets",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string",
+              "required": true,
+              "description": "In HomeKit and on the dashboard. The data is kept by it: renaming starts afresh."
+            },
+            "host": {
+              "title": "IP address or host name",
+              "type": "string",
+              "required": true,
+              "placeholder": "192.168.1.1"
+            },
+            "sensor": {
+              "title": "Occupancy sensor in HomeKit",
+              "type": "boolean",
+              "default": true,
+              "description": "Occupied while it answers, not occupied once a whole round of pings went unanswered."
+            },
+            "icon": {
+              "title": "Icon on the dashboard",
+              "type": "string",
+              "oneOf": [
+                { "title": "Router", "enum": ["router"] },
+                { "title": "Internet", "enum": ["internet"] },
+                { "title": "Server", "enum": ["server"] },
+                { "title": "Device", "enum": ["device"] }
+              ],
+              "description": "Guessed from the name and address if left out."
+            }
+          }
+        }
+      },
+      "stepSeconds": {
+        "title": "Round every (s)",
+        "type": "integer",
+        "minimum": 10,
+        "maximum": 3600,
+        "placeholder": 60
+      },
+      "pings": {
+        "title": "Pings per round",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100,
+        "placeholder": 20,
+        "description": "Spread over nine tenths of the round."
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "type": "boolean",
+        "default": true
+      },
+      "port": {
+        "title": "Dashboard port",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 65535,
+        "placeholder": 8584
+      },
+      "rawDays": {
+        "title": "Rounds kept as measured (days)",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 3650,
+        "placeholder": 30,
+        "description": "Then folded into their hour."
+      },
+      "keepDays": {
+        "title": "Hours kept (days)",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 36500,
+        "placeholder": 730
+      }
+    }
+  },
+  "layout": [
+    "name",
+    {
+      "key": "targets",
+      "type": "array",
+      "orderable": false,
+      "buttonText": "Add target",
+      "items": [
+        {
+          "type": "flex",
+          "flex-flow": "row wrap",
+          "items": ["targets[].name", "targets[].host"]
+        },
+        {
+          "type": "flex",
+          "flex-flow": "row wrap",
+          "items": ["targets[].sensor", "targets[].icon"]
+        }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "title": "More",
+      "expandable": true,
+      "items": [
+        { "type": "flex", "flex-flow": "row wrap", "items": ["stepSeconds", "pings"] },
+        { "type": "flex", "flex-flow": "row wrap", "items": ["dashboard", "port"] },
+        { "type": "flex", "flex-flow": "row wrap", "items": ["rawDays", "keepDays"] }
+      ]
+    }
+  ]
+}

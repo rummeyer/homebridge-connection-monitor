@@ -6,6 +6,36 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0] — 2026-11-02
+
+Connection Monitor is a Homebridge plugin now: **homebridge-connection-monitor**.
+
+### Added
+
+- An **occupancy sensor** in HomeKit per target: occupied from the first
+  ping that comes back, not occupied once a whole round went unanswered.
+  Each target can do without one.
+- Settings in the Homebridge UI: the targets with their name, address,
+  sensor and icon, and how often, how many pings, the dashboard and how
+  long what is kept.
+
+### Changed
+
+- The pings go out through the system's own `ping`, one per target, all at
+  once: **fping is no longer needed**.
+- The data is kept in `connection-monitor/connection-monitor.db` in
+  Homebridge's storage folder, as Appliance Monitor keeps its own. See
+  *Coming from Connection Monitor 1* in the README to take it over.
+- Smokeping's history is taken over with `connection-monitor-import`, into
+  Homebridge's storage folder; add the targets in the settings by the same
+  names.
+- No targets by default: they are set up in the settings.
+
+### Removed
+
+- The standalone service, `config.json`, `npm start` and the `fping` and
+  `database` settings.
+
 ## [1.1.0] — 2026-10-27
 
 ### Changed
@@ -37,6 +67,7 @@ The first release.
   its RRDs through Perl's RRDs module.
 - A systemd unit.
 
-[Unreleased]: https://github.com/rummeyer/connection-monitor/compare/v1.1.0...HEAD
-[1.1.0]: https://github.com/rummeyer/connection-monitor/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/rummeyer/connection-monitor/releases/tag/v1.0.0
+[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v1.1.0...v2.0.0
+[1.1.0]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/rummeyer/homebridge-connection-monitor/releases/tag/v1.0.0

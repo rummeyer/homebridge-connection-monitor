@@ -4,8 +4,9 @@
  *   GET /api/status                       every target: its last round, hour and day
  *   GET /api/series?target=…&range=24h    a target's chart: 1h, 3h, 12h, 24h, 7d, 30d or 1y
  *
- * Without a login, for a browser on the home network, as Appliance
- * Monitor's and Synology Monitor's dashboards are.
+ * Served by the plugin itself, without the Homebridge login, for a browser
+ * on the home network, as Appliance Monitor's and Synology Monitor's
+ * dashboards are.
  */
 import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -93,7 +94,8 @@ export function series(config: Config, store: Store, target: string, range: stri
   return { target, range, from, to, points: points(store.range(target, from, to), from, to, count) };
 }
 
-export function startServer(config: Config, store: Store, problems: string[]): Server {
+/** Serves the dashboard on the configured port; `onError` hears why it could not, such as the port taken. */
+export function startServer(config: Config, store: Store, problems: string[], onError: (error: Error) => void): Server {
   const server = createServer((request, response) => {
     const url = new URL(request.url ?? '/', 'http://dashboard');
     if (request.method !== 'GET' && request.method !== 'HEAD') {
@@ -125,6 +127,7 @@ export function startServer(config: Config, store: Store, problems: string[]): S
       json(response, 500, { error: (error as Error).message });
     }
   });
+  server.on('error', onError);
   server.listen(config.port);
   return server;
 }

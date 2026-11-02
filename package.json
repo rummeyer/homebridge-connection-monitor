@@ -1,34 +1,65 @@
 {
-  "name": "connection-monitor",
-  "version": "1.1.0",
-  "description": "Latency and packet loss to the router, the internet and anything else on the network — Smokeping, measured with fping and shown on a dashboard in Apple's Home look, with Smokeping's history taken over.",
+  "name": "homebridge-connection-monitor",
+  "displayName": "Connection Monitor",
+  "version": "2.0.0",
+  "description": "Homebridge plugin that pings your router, the internet and anything else on the network: an occupancy sensor per device in HomeKit, occupied while it answers — and latency and packet loss on a dashboard as Smokeping draws them, with Smokeping's history taken over",
   "license": "MIT",
   "author": "Oliver Rummeyer",
-  "type": "module",
-  "private": true,
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "scripts": {
-    "start": "node --disable-warning=ExperimentalWarning src/main.ts",
-    "import": "node --disable-warning=ExperimentalWarning src/import.ts",
-    "test": "node --test test/*.test.ts"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rummeyer/connection-monitor.git"
+    "url": "git+https://github.com/rummeyer/homebridge-connection-monitor.git"
   },
-  "homepage": "https://github.com/rummeyer/connection-monitor#readme",
   "bugs": {
-    "url": "https://github.com/rummeyer/connection-monitor/issues"
+    "url": "https://github.com/rummeyer/homebridge-connection-monitor/issues"
+  },
+  "homepage": "https://github.com/rummeyer/homebridge-connection-monitor#readme",
+  "main": "dist/index.js",
+  "bin": {
+    "connection-monitor-import": "dist/import.js"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^22.18.0 || ^24.0.0 || ^26.0.0",
+    "homebridge": "^2.0.0"
+  },
+  "files": [
+    "dist",
+    "web",
+    "config.schema.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "node --test test/*.test.ts",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run clean && npm run build && npm test"
   },
   "keywords": [
+    "homebridge-plugin",
+    "supports-hap",
+    "ping",
+    "occupancy",
+    "presence",
     "smokeping",
-    "fping",
     "latency",
     "packet loss",
-    "ping",
     "network monitor",
-    "dashboard"
-  ]
+    "dashboard",
+    "homekit"
+  ],
+  "funding": [
+    {
+      "type": "buymeacoffee",
+      "url": "https://buymeacoffee.com/rummeyer"
+    }
+  ],
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "homebridge": "^2.4.0",
+    "typescript": "^5.9.3"
+  }
 }

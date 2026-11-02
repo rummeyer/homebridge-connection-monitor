@@ -1,11 +1,10 @@
 /**
- * The settings, from config.json beside package.json, every one with a
- * default so that a missing file or key still runs: the targets to ping,
- * how often and how many pings, where the data goes, the dashboard's port,
- * and how long what is kept.
+ * The settings, from the platform's entry in Homebridge's config.json, every
+ * one with a default so that a missing key still runs: the targets to ping,
+ * how often and how many pings, the dashboard and its port, and how long
+ * what is kept.
  */
-import { readFileSync } from 'node:fs';
-import { isAbsolute, join } from 'node:path';
+import { join } from 'node:path';
 
 export type TargetIcon = 'router' | 'internet' | 'server' | 'device';
 
@@ -14,6 +13,8 @@ export interface Target {
   name: string;
   host: string;
   icon: TargetIcon;
+  /** Whether HomeKit has an occupancy sensor for it, occupied while it answers. */
+  sensor: boolean;
 }
 
 export interface Config {
@@ -22,28 +23,30 @@ export interface Config {
   stepSeconds: number;
   /** Pings per target and round, spread over most of the step. */
   pings: number;
-  fping: string;
+  /** Whether the dashboard is served. */
+  dashboard: boolean;
   port: number;
-  /** The SQLite file. */
-  database: string;
   /** Days each round is kept as it was measured, before it is folded into its hour. */
   rawDays: number;
   /** Days an hour is kept. */
   keepDays: number;
 }
 
+/** The package's folder, from src/ or dist/ alike. */
 export const ROOT = join(import.meta.dirname, '..');
 
+/** The plugin's folder in Homebridge's storage folder, as Appliance Monitor keeps its own. */
+export const DATA_DIR = 'connection-monitor';
+
+/** The SQLite file, in Homebridge's storage folder `storagePath`. */
+export const databaseFile = (storagePath: string): string => join(storagePath, DATA_DIR, 'connection-monitor.db');
+
 export const DEFAULTS: Config = {
-  targets: [
-    { name: 'Router', host: '10.0.1.1', icon: 'router' },
-    { name: 'Internet', host: '8.8.4.4', icon: 'internet' },
-  ],
+  targets: [],
   stepSeconds: 60,
   pings: 20,
-  fping: '/usr/bin/fping',
+  dashboard: true,
   port: 8584,
-  database: 'data/connection-monitor.db',
   rawDays: 30,
   keepDays: 730,
 };
@@ -69,7 +72,7 @@ export function guessIcon(name: string, host: string): TargetIcon {
   return 'device';
 }
 
-/** Settings from raw JSON; what is missing or wrong takes its default, and is said in `problems`. */
+/** Settings from the platform's raw JSON; what is missing or wrong takes its default, and is said in `problems`. */
 export function parseConfig(raw: unknown): { config: Config; problems: string[] } {
   const problems: string[] = [];
   const input = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
@@ -93,7 +96,7 @@ export function parseConfig(raw: unknown): { config: Config; problems: string[] 
         }
         seen.add(name);
         const icon = ICONS.includes(entry.icon as TargetIcon) ? (entry.icon as TargetIcon) : guessIcon(name, host);
-        targets.push({ name, host, icon });
+        targets.push({ name, host, icon, sensor: entry.sensor !== false });
       }
     }
   }
@@ -101,27 +104,10 @@ export function parseConfig(raw: unknown): { config: Config; problems: string[] 
     targets,
     stepSeconds: whole(input.stepSeconds, 10, 3600, DEFAULTS.stepSeconds),
     pings: whole(input.pings, 1, 100, DEFAULTS.pings),
-    fping: typeof input.fping === 'string' && input.fping ? input.fping : DEFAULTS.fping,
+    dashboard: input.dashboard !== false,
     port: whole(input.port, 1, 65535, DEFAULTS.port),
-    database: typeof input.database === 'string' && input.database ? input.database : DEFAULTS.database,
     rawDays: whole(input.rawDays, 1, 3650, DEFAULTS.rawDays),
     keepDays: whole(input.keepDays, 1, 36500, DEFAULTS.keepDays),
   };
-  if (!isAbsolute(config.database)) {
-    config.database = join(ROOT, config.database);
-  }
   return { config, problems };
-}
-
-/** config.json beside package.json, or the defaults if there is none. */
-export function loadConfig(file = join(ROOT, 'config.json')): { config: Config; problems: string[] } {
-  let raw: unknown = {};
-  try {
-    raw = JSON.parse(readFileSync(file, 'utf8'));
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-      return { ...parseConfig({}), problems: [`${file} could not be read: ${(error as Error).message}`] };
-    }
-  }
-  return parseConfig(raw);
 }

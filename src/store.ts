@@ -6,15 +6,31 @@
  */
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+import type { DatabaseSync as Database } from 'node:sqlite';
 
 import type { Sample } from './probe.ts';
 import { summarize } from './series.ts';
 
+// node:sqlite says once, as it loads, that it is experimental; in Homebridge's
+// log that reads as a fault of the plugin. Everything else is still said.
+const { DatabaseSync } = await (async () => {
+  const emitWarning = process.emitWarning;
+  process.emitWarning = ((warning: string | Error, ...rest: unknown[]) => {
+    if (!/SQLite is an experimental feature/.test(String(warning))) {
+      (emitWarning as (...args: unknown[]) => void).call(process, warning, ...rest);
+    }
+  }) as typeof process.emitWarning;
+  try {
+    return await import('node:sqlite');
+  } finally {
+    process.emitWarning = emitWarning;
+  }
+})();
+
 const HOUR = 3600;
 
 export class Store {
-  readonly #db: DatabaseSync;
+  readonly #db: Database;
 
   constructor(file: string) {
     if (file !== ':memory:') {

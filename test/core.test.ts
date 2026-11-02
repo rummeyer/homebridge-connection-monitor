@@ -2,29 +2,45 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { guessIcon, parseConfig } from '../src/config.ts';
-import { parseFping, pingPeriodMs } from '../src/probe.ts';
+import { parsePing, parseReply, pingArgs, pingPeriodMs } from '../src/probe.ts';
 import type { Sample } from '../src/probe.ts';
 import { points, quantile, summarize, thin } from '../src/series.ts';
 import { parseTargets, rowsToSamples } from '../src/smokeping.ts';
 import { Store } from '../src/store.ts';
 
-const targets = [
-  { name: 'Router', host: '10.0.1.1', icon: 'router' as const },
-  { name: 'Diskstation', host: '10.0.1.201', icon: 'server' as const },
-];
-
-test('fping counts: times sorted, a dash lost, a host missing from the output all lost', () => {
-  const out = '10.0.1.1   : 1.33 0.771 - 0.599\n10.0.1.9 : 3 3 3 3\n';
-  const [router, nas] = parseFping(out, targets, 600, 60, 4);
-  assert.deepEqual(router!.rtts, [0.599, 0.771, 1.33]);
-  assert.equal(router!.loss, 0.25);
-  assert.equal(router!.median, 0.771);
-  assert.deepEqual([nas!.loss, nas!.median, nas!.rtts], [1, null, []]);
+test('ping\'s output: times sorted, a ping without a line lost, a duplicate counted once', () => {
+  const out = [
+    'PING 10.0.1.1 (10.0.1.1) 56(84) bytes of data.',
+    '64 bytes from 10.0.1.1: icmp_seq=1 ttl=64 time=1.33 ms',
+    '64 bytes from 10.0.1.1: icmp_seq=2 ttl=64 time=0.771 ms',
+    '64 bytes from 10.0.1.1: icmp_seq=2 ttl=64 time=0.9 ms (DUP!)',
+    '64 bytes from 10.0.1.1: icmp_seq=4 ttl=64 time=0.599 ms',
+    '',
+    '--- 10.0.1.1 ping statistics ---',
+    '4 packets transmitted, 3 received, 25% packet loss, time 8102ms',
+  ].join('\n');
+  const router = parsePing(out, 'Router', 600, 60, 4);
+  assert.deepEqual(router.rtts, [0.599, 0.771, 1.33]);
+  assert.equal(router.loss, 0.25);
+  assert.equal(router.median, 0.771);
+  assert.deepEqual([router.target, router.t, router.step, router.sent], ['Router', 600, 60, 4]);
+  const nothing = parsePing('PING 10.0.1.201 (10.0.1.201) 56(84) bytes of data.\n', 'NAS', 600, 60, 4);
+  assert.deepEqual([nothing.loss, nothing.median, nothing.rtts], [1, null, []]);
 });
 
-test('pings spread over nine tenths of the step', () => {
+test('an answer from macOS\'s and BusyBox\'s ping too, and one under a millisecond said as time<1', () => {
+  assert.deepEqual(parseReply('64 bytes from 10.0.1.1: icmp_seq=0 ttl=64 time=3.017 ms'), { seq: 0, ms: 3.017 });
+  assert.deepEqual(parseReply('64 bytes from 8.8.4.4: seq=3 ttl=117 time=12.4 ms'), { seq: 3, ms: 12.4 });
+  assert.deepEqual(parseReply('64 bytes from 10.0.1.1: icmp_seq=7 ttl=64 time<1 ms'), { seq: 7, ms: 1 });
+  assert.equal(parseReply('Request timeout for icmp_seq 5'), undefined);
+});
+
+test('pings spread over nine tenths of the step, each waited for as long as the period at most', () => {
   assert.equal(pingPeriodMs(60, 20), 2700);
   assert.equal(pingPeriodMs(300, 10), 27000);
+  assert.equal(pingPeriodMs(10, 100), 200, 'no faster than ping allows without root');
+  assert.deepEqual(pingArgs('10.0.1.1', 20, 2700, 'linux'), ['-n', '-c', '20', '-i', '2.7', '-W', '2', '10.0.1.1']);
+  assert.deepEqual(pingArgs('10.0.1.1', 20, 2700, 'darwin'), ['-n', '-c', '20', '-i', '2.7', '-W', '2000', '10.0.1.1']);
 });
 
 test('quantiles between neighbours, and a summary thinned to its quantiles', () => {
@@ -92,11 +108,16 @@ test('rounds older than rawDays fold into their hour, replacing one from Smokepi
   store.close();
 });
 
-test('settings: defaults for what is missing, an icon guessed', () => {
-  const { config, problems } = parseConfig({ targets: [{ name: 'NAS', host: '10.0.1.201' }, { host: 'x' }], pings: 0 });
-  assert.equal(config.targets[0]!.icon, 'server');
-  assert.equal(config.pings, 20);
+test('settings: defaults for what is missing, an icon guessed, a sensor unless switched off', () => {
+  const { config, problems } = parseConfig({
+    platform: 'ConnectionMonitor',
+    targets: [{ name: 'NAS', host: '10.0.1.201' }, { name: 'Phone', host: '10.0.1.50', sensor: false }, { host: 'x' }],
+    pings: 0,
+  });
+  assert.deepEqual(config.targets.map((t) => [t.name, t.icon, t.sensor]), [['NAS', 'server', true], ['Phone', 'device', false]]);
+  assert.deepEqual([config.pings, config.stepSeconds, config.port, config.dashboard], [20, 60, 8584, true]);
   assert.equal(problems.length, 1);
+  assert.deepEqual(parseConfig({}).config.targets, [], 'no targets until some are set up');
   assert.equal(guessIcon('Internet', '8.8.4.4'), 'internet');
   assert.equal(guessIcon('Router', '10.0.1.1'), 'router');
 });
