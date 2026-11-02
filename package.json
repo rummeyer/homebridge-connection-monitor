@@ -24,6 +24,7 @@
   },
   "files": [
     "dist",
+    "homebridge-ui",
     "web",
     "config.schema.json",
     "README.md",
@@ -61,5 +62,8 @@
     "@types/node": "^22.20.4",
     "homebridge": "^2.4.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@homebridge/plugin-ui-utils": "^2.2.6"
   }
 }

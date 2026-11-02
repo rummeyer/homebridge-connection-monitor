@@ -15,7 +15,6 @@
   <a href="https://github.com/rummeyer/homebridge-connection-monitor/blob/main/LICENSE"><img src="https://img.shields.io/badge/licence-MIT-blue" alt="Licence"></a>
   <img src="https://img.shields.io/badge/homebridge-%E2%89%A5%202.0.0-purple" alt="Homebridge 2.0.0+">
   <img src="https://img.shields.io/badge/node-22%20%7C%2024%20%7C%2026-green" alt="Node 22, 24 or 26">
-  <img src="https://img.shields.io/badge/dependencies-none-brightgreen" alt="No dependencies">
 </p>
 
 <p align="center">
@@ -60,8 +59,8 @@ Nothing to install beside it: the pings go out through the system's own
 
 ## In the Home app
 
-Each target with **Occupancy sensor** ticked is an accessory of its own: an
-occupancy sensor, named as the target.
+Each device is an accessory of its own: an occupancy sensor, named as the
+device.
 
 | | |
 |---|---|
@@ -84,6 +83,7 @@ within a few seconds.
 ## Dashboard
 
 At `http://<Homebridge machine>:8584/`, without a login, as it only reads.
+The plugin's settings page links to it.
 
 **A tile per target**: the median round-trip time of the last round, and
 whether it is *Good*, losing pings, or giving *No answer* at all — with the
@@ -134,16 +134,16 @@ Homebridge: the plugin's bridge settings in the Homebridge UI, or
 
 ## Setting up
 
-**1. The targets.** Open the plugin's settings in the Homebridge UI and
-**Add target** for each device: a name, and its IP address or host name.
-The router and a server on the internet, such as `8.8.4.4`, are a good start.
+**1. The devices.** Open the plugin's settings in the Homebridge UI and
+**+ Add** each device: a name, and its IP address. The router and a server
+on the internet, such as `8.8.4.4`, are a good start.
 
 **2. Fixed addresses.** A device whose address changes is pinged at the wrong
 one. Give each a fixed address in the router — on a FRITZ!Box, *Home
 Network → Network → the device → Always assign this IPv4 address*.
 
 **3. The Home app.** Add the child bridge with its code or QR code from the
-Homebridge UI. Each target with a sensor appears as an accessory.
+Homebridge UI. Each device appears as an accessory.
 
 ```json
 {
@@ -153,7 +153,7 @@ Homebridge UI. Each target with a sensor appears as an accessory.
     { "name": "Router", "host": "192.168.1.1" },
     { "name": "Internet", "host": "8.8.4.4" },
     { "name": "Diskstation", "host": "192.168.1.20" },
-    { "name": "Phone", "host": "192.168.1.50", "icon": "device" }
+    { "name": "Phone", "host": "192.168.1.50" }
   ]
 }
 ```
@@ -162,7 +162,7 @@ Homebridge UI. Each target with a sensor appears as an accessory.
 
 | Setting | Default | |
 |---|---|---|
-| `targets` | none | Each with a `name` and a `host`; see below |
+| `targets` | none | The devices, each a `name` and a `host`, its IP address |
 | `stepSeconds` | `60` | Seconds between two rounds |
 | `pings` | `20` | Pings per target and round, spread over nine tenths of the round |
 | `dashboard` | `true` | Whether the dashboard is served |
@@ -170,14 +170,9 @@ Homebridge UI. Each target with a sensor appears as an accessory.
 | `rawDays` | `30` | Days each round is kept as measured, before it is folded into its hour |
 | `keepDays` | `730` | Days an hour is kept |
 
-Each target:
-
-| Setting | Default | |
-|---|---|---|
-| `name` | | In HomeKit and on the dashboard. The data is kept by it: a new name starts afresh |
-| `host` | | Its IP address or host name |
-| `sensor` | `true` | An occupancy sensor in HomeKit; without it, only on the dashboard |
-| `icon` | guessed | On the dashboard: `router`, `internet`, `server` or `device` |
+A device's name is what HomeKit and the dashboard call it, and what its data
+is kept by: a new name starts afresh. Its icon on the dashboard is guessed
+from the name and address — a router, the internet, a server or a device.
 
 ## How it works
 
@@ -235,7 +230,8 @@ goes on as it was:
    sudo install -d -o homebridge -g homebridge /var/lib/homebridge/connection-monitor
    sudo install -o homebridge -g homebridge -m 644 data/connection-monitor.db /var/lib/homebridge/connection-monitor/
    ```
-3. Add its targets in the plugin's settings under the same names.
+3. Add its targets in the plugin's settings under the same names and
+   addresses; an `icon` is no longer set, it is guessed.
 
 fping is no longer needed.
 

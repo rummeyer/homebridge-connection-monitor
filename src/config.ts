@@ -12,9 +12,8 @@ export interface Target {
   /** What the dashboard calls it, and what its data is kept by. */
   name: string;
   host: string;
+  /** The dashboard's icon, guessed from the name and address. */
   icon: TargetIcon;
-  /** Whether HomeKit has an occupancy sensor for it, occupied while it answers. */
-  sensor: boolean;
 }
 
 export interface Config {
@@ -50,8 +49,6 @@ export const DEFAULTS: Config = {
   rawDays: 30,
   keepDays: 730,
 };
-
-const ICONS: TargetIcon[] = ['router', 'internet', 'server', 'device'];
 
 function whole(value: unknown, min: number, max: number, fallback: number): number {
   return typeof value === 'number' && Number.isInteger(value) && value >= min && value <= max ? value : fallback;
@@ -95,8 +92,7 @@ export function parseConfig(raw: unknown): { config: Config; problems: string[] 
           continue;
         }
         seen.add(name);
-        const icon = ICONS.includes(entry.icon as TargetIcon) ? (entry.icon as TargetIcon) : guessIcon(name, host);
-        targets.push({ name, host, icon, sensor: entry.sensor !== false });
+        targets.push({ name, host, icon: guessIcon(name, host) });
       }
     }
   }

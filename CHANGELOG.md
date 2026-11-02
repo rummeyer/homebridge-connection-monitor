@@ -12,12 +12,12 @@ Connection Monitor is a Homebridge plugin now: **homebridge-connection-monitor**
 
 ### Added
 
-- An **occupancy sensor** in HomeKit per target: occupied from the first
+- An **occupancy sensor** in HomeKit per device: occupied from the first
   ping that comes back, not occupied once a whole round went unanswered.
-  Each target can do without one.
-- Settings in the Homebridge UI: the targets with their name, address,
-  sensor and icon, and how often, how many pings, the dashboard and how
-  long what is kept.
+- A settings page in the Homebridge UI, as Synology Monitor's: the devices,
+  each just a name and an IP address, and General with the link to the
+  dashboard under its switch, how often, how many pings and how long what
+  is kept.
 
 ### Changed
 
@@ -30,6 +30,8 @@ Connection Monitor is a Homebridge plugin now: **homebridge-connection-monitor**
   Homebridge's storage folder; add the targets in the settings by the same
   names.
 - No targets by default: they are set up in the settings.
+- A target's icon is always guessed from its name and address; `icon` is
+  no longer a setting.
 
 ### Removed
 

@@ -1,0 +1,26 @@
+<!--
+  Settings page shown inside the Homebridge UI, as Synology Monitor's.
+
+  Runs in an iframe the host provides; `homebridge.*` is injected by it. The
+  host supplies Bootstrap and the active theme, so styling stays minimal.
+
+  The settings are this page's own form (settings.js): the devices, each a
+  name and an IP address, and General with the link to the dashboard under
+  its switch. Homebridge's generated form is kept hidden.
+-->
+<script src="settings.js"></script>
+
+<div class="card mb-3">
+  <div class="card-body" id="cm-settings"></div>
+</div>
+
+<script>
+  (async () => {
+    homebridge.hideSchemaForm();
+    const style = document.createElement('style');
+    style.textContent = window.ConnectionSettings.css;
+    document.head.append(style);
+    const address = await homebridge.request('/address').catch(() => null);
+    await window.ConnectionSettings.mount(document.getElementById('cm-settings'), { homebridge, address });
+  })();
+</script>

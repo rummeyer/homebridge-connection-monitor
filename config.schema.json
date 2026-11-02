@@ -2,8 +2,10 @@
   "pluginAlias": "ConnectionMonitor",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Pings each target every minute. A target with a sensor is an occupancy sensor in HomeKit, occupied while it answers. The dashboard shows latency and loss at http://&lt;this machine&gt;:8584/.",
+  "headerDisplay": "Pings each device every minute. Each is an occupancy sensor in HomeKit, occupied while it answers, and on the dashboard with its latency and loss.",
   "footerDisplay": "Data is kept in the connection-monitor folder of Homebridge's storage folder.",
+  "customUi": true,
+  "customUiPath": "./homebridge-ui",
   "schema": {
     "type": "object",
     "properties": {
@@ -26,27 +28,10 @@
               "description": "In HomeKit and on the dashboard. The data is kept by it: renaming starts afresh."
             },
             "host": {
-              "title": "IP address or host name",
+              "title": "IP address",
               "type": "string",
               "required": true,
               "placeholder": "192.168.1.1"
-            },
-            "sensor": {
-              "title": "Occupancy sensor in HomeKit",
-              "type": "boolean",
-              "default": true,
-              "description": "Occupied while it answers, not occupied once a whole round of pings went unanswered."
-            },
-            "icon": {
-              "title": "Icon on the dashboard",
-              "type": "string",
-              "oneOf": [
-                { "title": "Router", "enum": ["router"] },
-                { "title": "Internet", "enum": ["internet"] },
-                { "title": "Server", "enum": ["server"] },
-                { "title": "Device", "enum": ["device"] }
-              ],
-              "description": "Guessed from the name and address if left out."
             }
           }
         }
@@ -106,12 +91,10 @@
         {
           "type": "flex",
           "flex-flow": "row wrap",
-          "items": ["targets[].name", "targets[].host"]
-        },
-        {
-          "type": "flex",
-          "flex-flow": "row wrap",
-          "items": ["targets[].sensor", "targets[].icon"]
+          "items": [
+            "targets[].name",
+            "targets[].host"
+          ]
         }
       ]
     },
@@ -120,9 +103,30 @@
       "title": "More",
       "expandable": true,
       "items": [
-        { "type": "flex", "flex-flow": "row wrap", "items": ["stepSeconds", "pings"] },
-        { "type": "flex", "flex-flow": "row wrap", "items": ["dashboard", "port"] },
-        { "type": "flex", "flex-flow": "row wrap", "items": ["rawDays", "keepDays"] }
+        {
+          "type": "flex",
+          "flex-flow": "row wrap",
+          "items": [
+            "stepSeconds",
+            "pings"
+          ]
+        },
+        {
+          "type": "flex",
+          "flex-flow": "row wrap",
+          "items": [
+            "dashboard",
+            "port"
+          ]
+        },
+        {
+          "type": "flex",
+          "flex-flow": "row wrap",
+          "items": [
+            "rawDays",
+            "keepDays"
+          ]
+        }
       ]
     }
   ]

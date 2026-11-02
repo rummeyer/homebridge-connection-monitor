@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
+import { runInNewContext } from 'node:vm';
 
-import { guessIcon, parseConfig } from '../src/config.ts';
+import { DEFAULTS, guessIcon, parseConfig } from '../src/config.ts';
 import { parsePing, parseReply, pingArgs, pingPeriodMs } from '../src/probe.ts';
 import type { Sample } from '../src/probe.ts';
 import { points, quantile, summarize, thin } from '../src/series.ts';
@@ -108,16 +110,26 @@ test('rounds older than rawDays fold into their hour, replacing one from Smokepi
   store.close();
 });
 
-test('settings: defaults for what is missing, an icon guessed, a sensor unless switched off', () => {
+test('settings: defaults for what is missing, each target a name and an address, its icon guessed', () => {
   const { config, problems } = parseConfig({
     platform: 'ConnectionMonitor',
-    targets: [{ name: 'NAS', host: '10.0.1.201' }, { name: 'Phone', host: '10.0.1.50', sensor: false }, { host: 'x' }],
+    targets: [{ name: 'NAS', host: '10.0.1.201' }, { name: 'Phone', host: '10.0.1.50', icon: 'router' }, { host: 'x' }],
     pings: 0,
   });
-  assert.deepEqual(config.targets.map((t) => [t.name, t.icon, t.sensor]), [['NAS', 'server', true], ['Phone', 'device', false]]);
+  assert.deepEqual(config.targets.map((t) => [t.name, t.host, t.icon]), [['NAS', '10.0.1.201', 'server'], ['Phone', '10.0.1.50', 'device']]);
   assert.deepEqual([config.pings, config.stepSeconds, config.port, config.dashboard], [20, 60, 8584, true]);
   assert.equal(problems.length, 1);
   assert.deepEqual(parseConfig({}).config.targets, [], 'no targets until some are set up');
   assert.equal(guessIcon('Internet', '8.8.4.4'), 'internet');
   assert.equal(guessIcon('Router', '10.0.1.1'), 'router');
+});
+
+test("the settings page's defaults are the plugin's", () => {
+  const window: Record<string, any> = {};
+  runInNewContext(readFileSync(new URL('../homebridge-ui/public/settings.js', import.meta.url), 'utf8'), { window });
+  const { DEFAULTS: page } = window.ConnectionSettings;
+  assert.deepEqual(
+    [page.stepSeconds, page.pings, page.port, page.rawDays, page.keepDays],
+    [DEFAULTS.stepSeconds, DEFAULTS.pings, DEFAULTS.port, DEFAULTS.rawDays, DEFAULTS.keepDays],
+  );
 });
