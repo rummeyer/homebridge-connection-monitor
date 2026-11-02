@@ -5,7 +5,7 @@
 <h1 align="center">homebridge-connection-monitor</h1>
 
 <p align="center">
-  Whether your <b>router</b>, the <b>internet</b>, a <b>phone</b> or anything else on your network <b>answers</b> &mdash; as an occupancy sensor in the Apple Home app. And how fast, and how often it does not: <b>Smokeping</b>, on a dashboard in the Home look, with Smokeping's history taken over.
+  Whether your <b>router</b>, the <b>internet</b>, a <b>phone</b> or anything else on your network <b>answers</b> &mdash; as an occupancy sensor, a switch or an outlet in the Apple Home app. And how fast, and how often it does not: <b>Smokeping</b>, on a dashboard in the Home look, with Smokeping's history taken over.
 </p>
 
 <p align="center">
@@ -24,8 +24,8 @@
 ---
 
 Give each device a **name** and its **IP address**, and it becomes an
-**occupancy sensor** in HomeKit: **occupied while it answers**, not occupied
-once it stops. A phone that comes home, a NAS that was switched on, the
+**occupancy sensor** in HomeKit — or a switch or an outlet: **occupied, or
+on, while it answers**, off once it stops. A phone that comes home, a NAS that was switched on, the
 internet that went down — each one a trigger for an automation.
 
 Every minute it sends each target **20 pings**, spread over the minute, as
