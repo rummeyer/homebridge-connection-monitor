@@ -39,7 +39,7 @@ Nothing to install beside it: the pings go out through the system's own
 `ping`, and the data is kept in **SQLite**, which comes with Node.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/dashboard-home.png" alt="The dashboard in the Home look: tiles for Router (0.76 ms, Good), Internet (15.3 ms, Good) and Diskstation (No answer), and below them 30-hour charts of each, the median a green line in grey smoke, the Diskstation a red line of no answer" width="760">
+  <img src="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/dashboard-home.png" alt="The dashboard in the Home look: tiles for Router (0.80 ms), Internet (13.4 ms) and Diskstation (0.23 ms), all Good, and below them 24-hour charts of each, the median a green line in the smoke of the pings, the Diskstation a red line of no answer until it was switched on in the morning" width="760">
 </p>
 
 ## Contents
@@ -106,7 +106,7 @@ Home, light and dark, switched by the button in the header.
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/dashboard-dark.png">
-    <img src="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/dashboard-light.png" alt="The dashboard in the light look, 30 hours: Router around 0.7 ms, Internet around 12 ms with its evening peaks, and the Diskstation not answering" width="380">
+    <img src="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/dashboard-light.png" alt="The dashboard in the light look, 24 hours: Router around 0.75 ms, Internet around 12 ms with its evening peaks, and the Diskstation answering since the morning" width="380">
   </picture>
   &nbsp;
   <img src="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/dashboard-year.png" alt="A year: the Router steady below a millisecond, the Internet dropping from about 20 to about 12 ms in February, and the Diskstation answering only on the days it was switched on" width="380">
