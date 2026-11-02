@@ -17,17 +17,17 @@
   const DEFAULTS = { stepSeconds: 60, pings: 20, port: 8584, rawDays: 30, keepDays: 730 };
   /** How a device is in HomeKit, as Appliance Monitor's Running; as SHOWN in src/config.ts. */
   const SHOWN = [
-    ['occupancy', 'Occupancy sensor — occupied while it answers'],
-    ['switch', 'Switch — on while it answers'],
-    ['outlet', 'Outlet — on while it answers'],
-    ['none', 'Not in HomeKit — still on the dashboard'],
+    ['occupancy', 'Occupancy sensor'],
+    ['switch', 'Switch'],
+    ['outlet', 'Outlet'],
+    ['none', 'Not in HomeKit'],
   ];
 
   const css = `
   .cm-section { margin-bottom: 1.25rem; }
   .cm-section > h6 { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; opacity: .65; margin-bottom: .5rem; }
   .cm-row { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: .5rem; align-items: center; margin-bottom: .5rem; }
-  .cm-row select { min-width: 14rem; }
+  .cm-row select { min-width: 10rem; }
   @media (max-width: 640px) { .cm-row { grid-template-columns: 1fr 1fr auto; } .cm-row select { grid-column: 1 / 3; } }
   .cm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .75rem 1rem; }
   .cm-help { font-size: .78rem; opacity: .65; margin-top: .2rem; }
@@ -174,7 +174,7 @@
             container.querySelectorAll('.cm-row input')[2 * (config.targets.length - 1)]?.focus();
           },
         }, '+ Add'),
-        el('div', { class: 'cm-help mt-2' }, 'Each is on the dashboard, its data kept by its name. In HomeKit it is occupied or on while it answers pings, off once a whole round went unanswered. Changing how replaces it in HomeKit, with its automations.'));
+        el('div', { class: 'cm-help mt-2' }, 'Occupied or on while it answers pings.'));
     }
 
     /** The dashboard's address while it is switched on: this machine's, or the one the Homebridge UI was opened with. */

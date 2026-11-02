@@ -67,11 +67,12 @@ Each device is an accessory of its own, named as the device — shown as its
 | **Occupancy sensor** (default) | Occupied while it answers |
 | **Switch** | On while it answers |
 | **Outlet** | On, and in use, while it answers |
-| **Not in HomeKit** | Only on the dashboard |
+| **Not in HomeKit** | Still pinged, and on the dashboard |
 
-A switch or outlet only shows: switched in the Home app, it goes back a
-moment later. Changing how a device is shown replaces it in HomeKit, with its
-automations.
+All of them turn off once a whole round of pings went unanswered. A switch
+or outlet only shows: switched in the Home app, it goes back a moment later.
+Changing how a device is shown replaces it in HomeKit, with its automations.
+On the dashboard every device is shown, its data kept by its name.
 
 | | |
 |---|---|

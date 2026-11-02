@@ -39,25 +39,25 @@
               "default": "occupancy",
               "oneOf": [
                 {
-                  "title": "Occupancy sensor — occupied while it answers",
+                  "title": "Occupancy sensor",
                   "enum": [
                     "occupancy"
                   ]
                 },
                 {
-                  "title": "Switch — on while it answers",
+                  "title": "Switch",
                   "enum": [
                     "switch"
                   ]
                 },
                 {
-                  "title": "Outlet — on while it answers",
+                  "title": "Outlet",
                   "enum": [
                     "outlet"
                   ]
                 },
                 {
-                  "title": "Not in HomeKit — still on the dashboard",
+                  "title": "Not in HomeKit",
                   "enum": [
                     "none"
                   ]
