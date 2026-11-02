@@ -117,7 +117,13 @@ export function pingTarget(
     child.stderr.setEncoding('utf8').on('data', (chunk: string) => {
       errors += chunk;
     });
+    let finished = false;
+    // A ping that cannot run says so twice, as an error and as it closes: the first is the one.
     const done = (error?: string): void => {
+      if (finished) {
+        return;
+      }
+      finished = true;
       clearTimeout(timer);
       const sample = parsePing(output, target.name, t, config.stepSeconds, config.pings);
       resolve(error && sample.rtts.length === 0 ? { ...sample, error } : sample);

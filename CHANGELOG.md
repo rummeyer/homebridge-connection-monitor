@@ -6,6 +6,15 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.1] — 2026-11-02
+
+### Changed
+
+- Cleaner code without change to what it does: the samples read from the
+  database in one place, the figures of a tile — median, loss, fastest and
+  slowest ping — made in one, and a `ping` that cannot run finishes its
+  round once rather than twice.
+
 ## [2.0.0] — 2026-11-02
 
 Connection Monitor is a Homebridge plugin now: **homebridge-connection-monitor**.
@@ -73,7 +82,8 @@ The first release.
   its RRDs through Perl's RRDs module.
 - A systemd unit.
 
-[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/rummeyer/homebridge-connection-monitor/releases/tag/v1.0.0

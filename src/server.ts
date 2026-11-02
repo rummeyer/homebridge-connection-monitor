@@ -15,6 +15,7 @@ import { join } from 'node:path';
 
 import { ROOT } from './config.ts';
 import type { Config } from './config.ts';
+import type { Sample } from './probe.ts';
 import { points, summarize } from './series.ts';
 import type { Store } from './store.ts';
 
@@ -44,6 +45,14 @@ function json(response: ServerResponse, status: number, body: unknown): void {
   response.end(JSON.stringify(body));
 }
 
+/** What a tile shows of a sample: its median, loss, and fastest and slowest ping. */
+const figures = (sample: Sample) => ({
+  median: sample.median,
+  loss: sample.loss,
+  min: sample.rtts[0] ?? null,
+  max: sample.rtts.at(-1) ?? null,
+});
+
 /** A summary of a target's samples since `seconds` ago, or none if nothing was measured. */
 function since(store: Store, target: string, now: number, seconds: number) {
   const samples = store.range(target, now - seconds, now).filter((s) => s.t >= now - seconds);
@@ -51,8 +60,7 @@ function since(store: Store, target: string, now: number, seconds: number) {
     return null;
   }
   const finest = Math.min(...samples.map((s) => s.step));
-  const summary = summarize(target, samples.filter((s) => s.step === finest), now - seconds, seconds);
-  return { median: summary.median, loss: summary.loss, min: summary.rtts[0] ?? null, max: summary.rtts.at(-1) ?? null };
+  return figures(summarize(target, samples.filter((s) => s.step === finest), now - seconds, seconds));
 }
 
 export function status(config: Config, store: Store, problems: string[], now = Math.floor(Date.now() / 1000)) {
@@ -68,14 +76,7 @@ export function status(config: Config, store: Store, problems: string[], now = M
         name: target.name,
         host: target.host,
         icon: target.icon,
-        last: last && {
-          t: last.t,
-          step: last.step,
-          median: last.median,
-          loss: last.loss,
-          min: last.rtts[0] ?? null,
-          max: last.rtts.at(-1) ?? null,
-        },
+        last: last && { t: last.t, step: last.step, ...figures(last) },
         hour: since(store, target.name, now, 3600),
         day: since(store, target.name, now, 86400),
         since: oldest.get(target.name) ?? null,

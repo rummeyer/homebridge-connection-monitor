@@ -29,6 +29,13 @@ const { DatabaseSync } = await (async () => {
 
 const HOUR = 3600;
 
+/** A sample as a row: its times as JSON. */
+type Row = Omit<Sample, 'rtts'> & { rtts: string };
+
+const COLUMNS = 'target, t, step, sent, loss, median, rtts';
+
+const toSample = (row: Row): Sample => ({ ...row, rtts: JSON.parse(row.rtts) as number[] });
+
 export class Store {
   readonly #db: Database;
 
@@ -60,7 +67,7 @@ export class Store {
   /** Samples in, replacing one of the same target, step and start. */
   add(samples: Sample[]): void {
     const insert = this.#db.prepare(
-      'INSERT OR REPLACE INTO samples (target, t, step, sent, loss, median, rtts) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      `INSERT OR REPLACE INTO samples (${COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     );
     this.#db.exec('BEGIN');
     try {
@@ -77,17 +84,17 @@ export class Store {
   /** A target's samples that reach into `from` to `to` (unix seconds), oldest first. */
   range(target: string, from: number, to: number): Sample[] {
     const rows = this.#db
-      .prepare('SELECT target, t, step, sent, loss, median, rtts FROM samples WHERE target = ? AND t < ? AND t + step > ? ORDER BY t')
-      .all(target, to, from) as unknown as (Omit<Sample, 'rtts'> & { rtts: string })[];
-    return rows.map((row) => ({ ...row, rtts: JSON.parse(row.rtts) as number[] }));
+      .prepare(`SELECT ${COLUMNS} FROM samples WHERE target = ? AND t < ? AND t + step > ? ORDER BY t`)
+      .all(target, to, from) as unknown as Row[];
+    return rows.map(toSample);
   }
 
   /** The newest round of a target: measured here, or Smokeping's last before the first one here. */
   latest(target: string): Sample | undefined {
     const row = this.#db
-      .prepare('SELECT target, t, step, sent, loss, median, rtts FROM samples WHERE target = ? AND step < 3600 ORDER BY t DESC, step LIMIT 1')
-      .get(target) as unknown as (Omit<Sample, 'rtts'> & { rtts: string }) | undefined;
-    return row && { ...row, rtts: JSON.parse(row.rtts) as number[] };
+      .prepare(`SELECT ${COLUMNS} FROM samples WHERE target = ? AND step < ? ORDER BY t DESC, step LIMIT 1`)
+      .get(target, HOUR) as unknown as Row | undefined;
+    return row && toSample(row);
   }
 
   /** The oldest time anything is kept for, per target. */
@@ -104,13 +111,13 @@ export class Store {
   tidy(now: number, rawDays: number, keepDays: number): number {
     const before = Math.floor((now - rawDays * 86400) / HOUR) * HOUR;
     const old = this.#db
-      .prepare('SELECT target, t, step, sent, loss, median, rtts FROM samples WHERE step < ? AND t < ? ORDER BY target, t')
-      .all(HOUR, before) as unknown as (Omit<Sample, 'rtts'> & { rtts: string })[];
+      .prepare(`SELECT ${COLUMNS} FROM samples WHERE step < ? AND t < ? ORDER BY target, t`)
+      .all(HOUR, before) as unknown as Row[];
     const hours = new Map<string, Sample[]>();
-    for (const row of old) {
-      const key = `${row.target}\u0000${Math.floor(row.t / HOUR) * HOUR}`;
+    for (const sample of old.map(toSample)) {
+      const key = `${sample.target}\u0000${Math.floor(sample.t / HOUR) * HOUR}`;
       const list = hours.get(key) ?? [];
-      list.push({ ...row, rtts: JSON.parse(row.rtts) as number[] });
+      list.push(sample);
       hours.set(key, list);
     }
     const folded = [...hours].map(([key, samples]) => {
