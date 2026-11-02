@@ -8,14 +8,18 @@ import { join } from 'node:path';
 
 export type TargetIcon = 'router' | 'internet' | 'server' | 'device';
 
+/** How a target is in HomeKit, as Appliance Monitor offers its Running: or not at all. */
+export type Shown = 'occupancy' | 'switch' | 'outlet' | 'none';
+export const SHOWN: readonly Shown[] = ['occupancy', 'switch', 'outlet', 'none'];
+
 export interface Target {
   /** What the dashboard calls it, and what its data is kept by. */
   name: string;
   host: string;
   /** The dashboard's icon, guessed from the name and address. */
   icon: TargetIcon;
-  /** Whether HomeKit has an occupancy sensor for it, occupied while it answers. */
-  sensor: boolean;
+  /** How HomeKit has it: occupied or on while it answers, or not at all. */
+  homekit: Shown;
 }
 
 export interface Config {
@@ -94,7 +98,9 @@ export function parseConfig(raw: unknown): { config: Config; problems: string[] 
           continue;
         }
         seen.add(name);
-        targets.push({ name, host, icon: guessIcon(name, host), sensor: entry.sensor !== false });
+        // 2.0.0 before its release had a tick box, `sensor`; unticked is none.
+        const homekit = SHOWN.includes(entry.homekit as Shown) ? (entry.homekit as Shown) : entry.sensor === false ? 'none' : 'occupancy';
+        targets.push({ name, host, icon: guessIcon(name, host), homekit });
       }
     }
   }

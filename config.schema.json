@@ -2,7 +2,7 @@
   "pluginAlias": "ConnectionMonitor",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Pings each device every minute. Each is an occupancy sensor in HomeKit, occupied while it answers, and on the dashboard with its latency and loss.",
+  "headerDisplay": "Pings each device every minute. Each is in HomeKit as an occupancy sensor, a switch or an outlet, occupied or on while it answers, and on the dashboard with its latency and loss.",
   "footerDisplay": "Data is kept in the connection-monitor folder of Homebridge's storage folder.",
   "customUi": true,
   "customUiPath": "./homebridge-ui",
@@ -33,11 +33,36 @@
               "required": true,
               "placeholder": "192.168.1.1"
             },
-            "sensor": {
-              "title": "Occupancy sensor",
-              "type": "boolean",
-              "default": true,
-              "description": "In HomeKit, occupied while it answers."
+            "homekit": {
+              "title": "In HomeKit",
+              "type": "string",
+              "default": "occupancy",
+              "oneOf": [
+                {
+                  "title": "Occupancy sensor — occupied while it answers",
+                  "enum": [
+                    "occupancy"
+                  ]
+                },
+                {
+                  "title": "Switch — on while it answers",
+                  "enum": [
+                    "switch"
+                  ]
+                },
+                {
+                  "title": "Outlet — on while it answers",
+                  "enum": [
+                    "outlet"
+                  ]
+                },
+                {
+                  "title": "Not in HomeKit — still on the dashboard",
+                  "enum": [
+                    "none"
+                  ]
+                }
+              ]
             }
           }
         }
@@ -100,7 +125,7 @@
           "items": [
             "targets[].name",
             "targets[].host",
-            "targets[].sensor"
+            "targets[].homekit"
           ]
         }
       ]

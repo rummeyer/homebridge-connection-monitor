@@ -1,7 +1,7 @@
 /**
  * The platform: pings every target each step and keeps what came back,
- * tidies once an hour, serves the dashboard, and gives each target with a
- * sensor an accessory in HomeKit.
+ * tidies once an hour, serves the dashboard, and gives each target shown in
+ * HomeKit an accessory there.
  */
 import type { Server } from 'node:http';
 
@@ -9,7 +9,7 @@ import type { API, DynamicPlatformPlugin, Logging, PlatformAccessory, PlatformCo
 
 import { TargetAccessory } from './accessory.ts';
 import { databaseFile, parseConfig } from './config.ts';
-import type { Config, Target } from './config.ts';
+import type { Config, Shown, Target } from './config.ts';
 import { probe } from './probe.ts';
 import { startServer } from './server.ts';
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.ts';
@@ -83,10 +83,11 @@ export class ConnectionMonitorPlatform implements DynamicPlatformPlugin {
     this.#timers.push(setInterval(() => this.#tidy(), 3600_000));
   }
 
-  /** An accessory per target with a sensor; the others' and those of targets gone are removed. */
+  /** An accessory per target shown in HomeKit; the others' and those of targets gone are removed. */
   #syncAccessories(): void {
     const keep = new Set<string>();
-    for (const target of this.#config.targets.filter((t) => t.sensor)) {
+    const shown = (t: Target): t is Target & { homekit: Exclude<Shown, 'none'> } => t.homekit !== 'none';
+    for (const target of this.#config.targets.filter(shown)) {
       const uuid = this.#api.hap.uuid.generate(`${PLUGIN_NAME}:${target.name}`);
       keep.add(uuid);
       let accessory = this.#cached.get(uuid);

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { runInNewContext } from 'node:vm';
 
-import { DEFAULTS, guessIcon, parseConfig } from '../src/config.ts';
+import { DEFAULTS, guessIcon, parseConfig, SHOWN } from '../src/config.ts';
 import { parsePing, parseReply, pingArgs, pingPeriodMs } from '../src/probe.ts';
 import type { Sample } from '../src/probe.ts';
 import { points, quantile, summarize, thin } from '../src/series.ts';
@@ -110,13 +110,24 @@ test('rounds older than rawDays fold into their hour, replacing one from Smokepi
   store.close();
 });
 
-test('settings: defaults for what is missing, each target a name and an address, its icon guessed, a sensor unless unticked', () => {
+test('settings: defaults for what is missing, each target a name and an address, its icon guessed, an occupancy sensor unless chosen otherwise', () => {
   const { config, problems } = parseConfig({
     platform: 'ConnectionMonitor',
-    targets: [{ name: 'NAS', host: '10.0.1.201' }, { name: 'Phone', host: '10.0.1.50', icon: 'router', sensor: false }, { host: 'x' }],
+    targets: [
+      { name: 'NAS', host: '10.0.1.201' },
+      { name: 'Phone', host: '10.0.1.50', icon: 'router', homekit: 'switch' },
+      { name: 'TV', host: '10.0.1.60', homekit: 'nonsense' },
+      { name: 'Old', host: '10.0.1.70', sensor: false },
+      { host: 'x' },
+    ],
     pings: 0,
   });
-  assert.deepEqual(config.targets.map((t) => [t.name, t.host, t.icon, t.sensor]), [['NAS', '10.0.1.201', 'server', true], ['Phone', '10.0.1.50', 'device', false]]);
+  assert.deepEqual(config.targets.map((t) => [t.name, t.host, t.icon, t.homekit]), [
+    ['NAS', '10.0.1.201', 'server', 'occupancy'],
+    ['Phone', '10.0.1.50', 'device', 'switch'],
+    ['TV', '10.0.1.60', 'device', 'occupancy'],
+    ['Old', '10.0.1.70', 'device', 'none'],
+  ]);
   assert.deepEqual([config.pings, config.stepSeconds, config.port, config.dashboard], [20, 60, 8584, true]);
   assert.equal(problems.length, 1);
   assert.deepEqual(parseConfig({}).config.targets, [], 'no targets until some are set up');
@@ -124,10 +135,11 @@ test('settings: defaults for what is missing, each target a name and an address,
   assert.equal(guessIcon('Router', '10.0.1.1'), 'router');
 });
 
-test("the settings page's defaults are the plugin's", () => {
+test("the settings page's defaults and HomeKit choices are the plugin's", () => {
   const window: Record<string, any> = {};
   runInNewContext(readFileSync(new URL('../homebridge-ui/public/settings.js', import.meta.url), 'utf8'), { window });
-  const { DEFAULTS: page } = window.ConnectionSettings;
+  const { DEFAULTS: page, SHOWN: shown } = window.ConnectionSettings;
+  assert.deepEqual(Array.from(shown, ([key]: [string]) => key), [...SHOWN]);
   assert.deepEqual(
     [page.stepSeconds, page.pings, page.port, page.rawDays, page.keepDays],
     [DEFAULTS.stepSeconds, DEFAULTS.pings, DEFAULTS.port, DEFAULTS.rawDays, DEFAULTS.keepDays],

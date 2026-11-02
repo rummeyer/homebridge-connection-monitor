@@ -59,13 +59,24 @@ Nothing to install beside it: the pings go out through the system's own
 
 ## In the Home app
 
-Each device with **Occupancy sensor** ticked — as it is, unless unticked —
-is an accessory of its own: an occupancy sensor, named as the device.
+Each device is an accessory of its own, named as the device — shown as its
+**In HomeKit** setting chooses, as Appliance Monitor's *Running*:
+
+| In HomeKit | |
+|---|---|
+| **Occupancy sensor** (default) | Occupied while it answers |
+| **Switch** | On while it answers |
+| **Outlet** | On, and in use, while it answers |
+| **Not in HomeKit** | Only on the dashboard |
+
+A switch or outlet only shows: switched in the Home app, it goes back a
+moment later. Changing how a device is shown replaces it in HomeKit, with its
+automations.
 
 | | |
 |---|---|
-| **Occupied** | It answered — at once, from the first ping that comes back |
-| **Not occupied** | A whole round of pings went unanswered |
+| **Occupied** / **on** | It answered — at once, from the first ping that comes back |
+| **Not occupied** / **off** | A whole round of pings went unanswered |
 
 A single lost ping never clears it: only a round of 20 without one answer
 does, so a device has to be gone for a minute. One that comes back is seen
@@ -135,8 +146,7 @@ Homebridge: the plugin's bridge settings in the Homebridge UI, or
 ## Setting up
 
 **1. The devices.** Open the plugin's settings in the Homebridge UI and
-**+ Add** each device: a name, its IP address, and whether it is an
-occupancy sensor in HomeKit. The router and a server on the internet, such
+**+ Add** each device: a name, its IP address, and how it is in HomeKit. The router and a server on the internet, such
 as `8.8.4.4`, are a good start.
 
 **2. Fixed addresses.** A device whose address changes is pinged at the wrong
@@ -144,7 +154,7 @@ one. Give each a fixed address in the router — on a FRITZ!Box, *Home
 Network → Network → the device → Always assign this IPv4 address*.
 
 **3. The Home app.** Add the child bridge with its code or QR code from the
-Homebridge UI. Each device with a sensor appears as an accessory.
+Homebridge UI. Each device shown in HomeKit appears as an accessory.
 
 ```json
 {
@@ -154,7 +164,7 @@ Homebridge UI. Each device with a sensor appears as an accessory.
     { "name": "Router", "host": "192.168.1.1" },
     { "name": "Internet", "host": "8.8.4.4" },
     { "name": "Diskstation", "host": "192.168.1.20" },
-    { "name": "Phone", "host": "192.168.1.50" }
+    { "name": "Phone", "host": "192.168.1.50", "homekit": "switch" }
   ]
 }
 ```
@@ -163,7 +173,7 @@ Homebridge UI. Each device with a sensor appears as an accessory.
 
 | Setting | Default | |
 |---|---|---|
-| `targets` | none | The devices, each a `name`, a `host` — its IP address — and `sensor`: `false` for none in HomeKit |
+| `targets` | none | The devices, each a `name`, a `host` — its IP address — and `homekit`: `occupancy` (default), `switch`, `outlet` or `none` |
 | `stepSeconds` | `60` | Seconds between two rounds |
 | `pings` | `20` | Pings per target and round, spread over nine tenths of the round |
 | `dashboard` | `true` | Whether the dashboard is served |

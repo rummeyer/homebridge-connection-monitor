@@ -1,6 +1,6 @@
 /**
  * The settings page's form, as Synology Monitor's: the devices, each a name,
- * an IP address and whether it is an occupancy sensor, and below them the General settings with the link
+ * an IP address and how it is in HomeKit, and below them the General settings with the link
  * to the dashboard under its switch.
  *
  * Drawn here from the config as Homebridge has it, rather than with
@@ -15,12 +15,20 @@
   const PLATFORM = 'ConnectionMonitor';
   /** As DEFAULTS in src/config.ts; a test keeps them the same. */
   const DEFAULTS = { stepSeconds: 60, pings: 20, port: 8584, rawDays: 30, keepDays: 730 };
+  /** How a device is in HomeKit, as Appliance Monitor's Running; as SHOWN in src/config.ts. */
+  const SHOWN = [
+    ['occupancy', 'Occupancy sensor — occupied while it answers'],
+    ['switch', 'Switch — on while it answers'],
+    ['outlet', 'Outlet — on while it answers'],
+    ['none', 'Not in HomeKit — still on the dashboard'],
+  ];
 
   const css = `
   .cm-section { margin-bottom: 1.25rem; }
   .cm-section > h6 { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; opacity: .65; margin-bottom: .5rem; }
   .cm-row { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: .5rem; align-items: center; margin-bottom: .5rem; }
-  .cm-row .form-check { margin: 0; white-space: nowrap; }
+  .cm-row select { min-width: 14rem; }
+  @media (max-width: 640px) { .cm-row { grid-template-columns: 1fr 1fr auto; } .cm-row select { grid-column: 1 / 3; } }
   .cm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .75rem 1rem; }
   .cm-help { font-size: .78rem; opacity: .65; margin-top: .2rem; }
   .cm-error { font-size: .78rem; color: #d64545; margin-top: .2rem; }
@@ -76,10 +84,15 @@
       configs.push({ platform: PLATFORM, name: 'Connection Monitor', targets: [] });
     }
     const config = configs[0];
-    // A name, an address and the sensor per device: what else an earlier version saved is dropped.
+    // A name, an address and how it is in HomeKit per device: what else an earlier version saved is
+    // dropped, a tick box for the sensor unticked kept as not in HomeKit.
+    const shownAs = (target) => (SHOWN.some(([key]) => key === target.homekit) ? target.homekit : target.sensor === false ? 'none' : 'occupancy');
     config.targets = (Array.isArray(config.targets) ? config.targets : [])
       .filter((target) => target && typeof target === 'object')
-      .map((target) => ({ name: String(target.name ?? ''), host: String(target.host ?? ''), ...(target.sensor === false ? { sensor: false } : {}) }));
+      .map((target) => {
+        const homekit = shownAs(target);
+        return { name: String(target.name ?? ''), host: String(target.host ?? ''), ...(homekit !== 'occupancy' ? { homekit } : {}) };
+      });
     let pending;
 
     /** Hands the config to Homebridge, a moment after the last change. */
@@ -137,12 +150,10 @@
           el('div', { class: 'cm-row' },
             text(target.name, 'Router', (value) => { target.name = value; check(); changed(); }),
             text(target.host, '192.168.1.1', (value) => { target.host = value.trim(); check(); changed(); }),
-            el('div', { class: 'form-check' },
-              el('input', {
-                class: 'form-check-input', type: 'checkbox', id: `cm-sensor-${index}`, checked: target.sensor !== false,
-                onchange: (e) => { setOrDrop(target, 'sensor', e.target.checked, true); changed(); },
-              }),
-              el('label', { class: 'form-check-label', for: `cm-sensor-${index}` }, 'Occupancy sensor')),
+            el('select', {
+              class: 'form-select form-select-sm', 'aria-label': `${target.name || 'Device'} in HomeKit`,
+              onchange: (e) => { setOrDrop(target, 'homekit', e.target.value, 'occupancy'); changed(); },
+            }, SHOWN.map(([key, label]) => el('option', { value: key, selected: key === (target.homekit ?? 'occupancy') }, label))),
             el('button', {
               type: 'button', class: 'btn btn-sm btn-outline-danger', title: `Delete ${target.name}`,
               onclick: () => { config.targets.splice(index, 1); changed(); render(); },
@@ -152,7 +163,7 @@
       return el('div', { class: 'cm-section' },
         el('h6', {}, 'Devices'),
         config.targets.length
-          ? el('div', { class: 'cm-row' }, el('div', { class: 'cm-help' }, 'Name'), el('div', { class: 'cm-help' }, 'IP address'), el('span'), el('span'))
+          ? el('div', { class: 'cm-row' }, el('div', { class: 'cm-help' }, 'Name'), el('div', { class: 'cm-help' }, 'IP address'), el('div', { class: 'cm-help' }, 'In HomeKit'), el('span'))
           : el('p', { class: 'text-muted' }, 'No devices yet. Add each with a name and its IP address.'),
         rows,
         el('button', {
@@ -163,7 +174,7 @@
             container.querySelectorAll('.cm-row input')[2 * (config.targets.length - 1)]?.focus();
           },
         }, '+ Add'),
-        el('div', { class: 'cm-help mt-2' }, 'Each is on the dashboard, its data kept by its name; with Occupancy sensor ticked, also in HomeKit, occupied while it answers pings.'));
+        el('div', { class: 'cm-help mt-2' }, 'Each is on the dashboard, its data kept by its name. In HomeKit it is occupied or on while it answers pings, off once a whole round went unanswered. Changing how replaces it in HomeKit, with its automations.'));
     }
 
     /** The dashboard's address while it is switched on: this machine's, or the one the Homebridge UI was opened with. */
@@ -211,5 +222,5 @@
     changed();
   }
 
-  root.ConnectionSettings = { css, mount, DEFAULTS };
+  root.ConnectionSettings = { css, mount, DEFAULTS, SHOWN };
 })(window);
