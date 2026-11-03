@@ -12,8 +12,7 @@
       "name": {
         "title": "Name",
         "type": "string",
-        "default": "Connection Monitor",
-        "required": true
+        "default": "Connection Monitor"
       },
       "targets": {
         "title": "Targets",
@@ -24,13 +23,11 @@
             "name": {
               "title": "Name",
               "type": "string",
-              "required": true,
               "description": "In HomeKit and on the dashboard. The data is kept by it: renaming starts afresh."
             },
             "host": {
               "title": "IP address",
               "type": "string",
-              "required": true,
               "placeholder": "192.168.1.1"
             },
             "homekit": {
@@ -64,7 +61,11 @@
                 }
               ]
             }
-          }
+          },
+          "required": [
+            "name",
+            "host"
+          ]
         }
       },
       "stepSeconds": {
