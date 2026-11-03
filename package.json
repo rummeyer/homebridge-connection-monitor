@@ -1,7 +1,7 @@
 {
   "name": "homebridge-connection-monitor",
   "displayName": "Connection Monitor",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Homebridge plugin that pings your router, the internet and anything else on the network: an occupancy sensor per device in HomeKit, occupied while it answers — and latency and packet loss on a dashboard as Smokeping draws them, with Smokeping's history taken over",
   "license": "MIT",
   "author": "Oliver Rummeyer",

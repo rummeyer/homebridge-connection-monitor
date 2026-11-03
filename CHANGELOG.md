@@ -6,6 +6,23 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.4] — 2026-11-03
+
+### Fixed
+
+- A request to the dashboard for a path that is no URL, such as `//`, no
+  longer brings the bridge down; it is answered with an error instead.
+- A target whose host begins with `-` is left out, with a warning, rather
+  than handed to `ping`, which would read it as one of its options.
+- The dashboard closes its open connections when Homebridge stops.
+
+### Changed
+
+- `ping` is looked for in `/bin`, `/sbin`, `/usr/bin` and `/usr/sbin`
+  before the `PATH`, so it is found under service managers whose `PATH`
+  lacks it. The `CONNECTION_MONITOR_PING` environment variable is gone:
+  the plugin reads no environment variables.
+
 ## [2.0.3] — 2026-11-03
 
 ### Changed
@@ -97,7 +114,8 @@ The first release.
   its RRDs through Perl's RRDs module.
 - A systemd unit.
 
-[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.3...HEAD
+[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.4...HEAD
+[2.0.4]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.0...v2.0.1
