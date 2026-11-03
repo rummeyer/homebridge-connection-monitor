@@ -165,6 +165,7 @@ export class ConnectionMonitorPlatform implements DynamicPlatformPlugin {
       clearTimeout(timer);
     }
     this.#server?.close();
+    this.#server?.closeAllConnections();
     // A round still going finds nothing to keep its samples in.
     const store = this.#store;
     this.#store = undefined;

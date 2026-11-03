@@ -11,6 +11,7 @@
  * less what came back.
  */
 import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
 
 import type { Config, Target } from './config.ts';
 
@@ -79,8 +80,13 @@ export function pingArgs(host: string, pings: number, periodMs: number, platform
   return ['-n', '-c', String(pings), '-i', String(periodMs / 1000), '-W', waitArg, host];
 }
 
-/** The `ping` to use: /bin/ping or /sbin/ping where PATH lacks it, as under some service managers. */
-const PING = process.env.CONNECTION_MONITOR_PING ?? 'ping';
+/**
+ * The `ping` to use: the system's own, where every system Homebridge runs on
+ * keeps it, so that a PATH without it, as under some service managers, does
+ * not matter; `ping` from the PATH only if none of those is there.
+ */
+const PING_PATHS = ['/bin/ping', '/sbin/ping', '/usr/bin/ping', '/usr/sbin/ping'];
+const PING = PING_PATHS.find((path) => existsSync(path)) ?? 'ping';
 
 /**
  * One target's round. `onReply` hears of each answer as it comes, so that a

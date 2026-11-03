@@ -98,12 +98,13 @@ export function series(config: Config, store: Store, target: string, range: stri
 /** Serves the dashboard on the configured port; `onError` hears why it could not, such as the port taken. */
 export function startServer(config: Config, store: Store, problems: string[], onError: (error: Error) => void): Server {
   const server = createServer((request, response) => {
-    const url = new URL(request.url ?? '/', 'http://dashboard');
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       response.writeHead(405, { Allow: 'GET, HEAD' }).end();
       return;
     }
     try {
+      // Inside the try: a path such as `//` is no URL, and must not bring the bridge down.
+      const url = new URL(request.url ?? '/', 'http://dashboard');
       if (url.pathname === '/api/status') {
         json(response, 200, status(config, store, problems));
         return;

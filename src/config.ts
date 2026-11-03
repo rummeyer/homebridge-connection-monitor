@@ -93,6 +93,11 @@ export function parseConfig(raw: unknown): { config: Config; problems: string[] 
           problems.push(`a target needs a name and a host: ${JSON.stringify(entry)}`);
           continue;
         }
+        if (host.startsWith('-')) {
+          // Handed to ping as it is: a host must not read as one of its options.
+          problems.push(`target "${name}": "${host}" is no host name or address; left out`);
+          continue;
+        }
         if (seen.has(name)) {
           problems.push(`target "${name}" is there twice; the second is left out`);
           continue;

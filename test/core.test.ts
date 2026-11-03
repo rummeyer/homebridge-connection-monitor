@@ -119,6 +119,7 @@ test('settings: defaults for what is missing, each target a name and an address,
       { name: 'TV', host: '10.0.1.60', homekit: 'nonsense' },
       { name: 'Old', host: '10.0.1.70', sensor: false },
       { host: 'x' },
+      { name: 'Flood', host: '-f' },
     ],
     pings: 0,
   });
@@ -129,7 +130,8 @@ test('settings: defaults for what is missing, each target a name and an address,
     ['Old', '10.0.1.70', 'device', 'none'],
   ]);
   assert.deepEqual([config.pings, config.stepSeconds, config.port, config.dashboard], [20, 60, 8584, true]);
-  assert.equal(problems.length, 1);
+  assert.equal(problems.length, 2);
+  assert.match(problems[1]!, /"-f" is no host/, 'a host that ping would read as an option is left out');
   assert.deepEqual(parseConfig({}).config.targets, [], 'no targets until some are set up');
   assert.equal(guessIcon('Internet', '8.8.4.4'), 'internet');
   assert.equal(guessIcon('Router', '10.0.1.1'), 'router');

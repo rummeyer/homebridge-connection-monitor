@@ -260,9 +260,9 @@ fping is no longer needed.
 ## Troubleshooting
 
 **A sensor is never occupied, and the log says `ping could not run`**: there
-is no `ping` on the Homebridge machine, or not on its `PATH`. Install it
-(`sudo apt install iputils-ping`), or set `CONNECTION_MONITOR_PING` to its
-full path in Homebridge's environment.
+is no `ping` on the Homebridge machine. The plugin looks for it in `/bin`,
+`/sbin`, `/usr/bin` and `/usr/sbin`, then on the `PATH`. Install it
+(`sudo apt install iputils-ping`).
 
 **`Operation not permitted`** in the log: `ping` may not ping without root
 here. On Linux, `sudo setcap cap_net_raw+ep $(which ping)`.
