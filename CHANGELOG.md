@@ -6,6 +6,14 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.5] — 2026-11-03
+
+### Fixed
+
+- `config.schema.json` is valid JSON Schema: a target's `name` and `host`
+  are required by a `required` list on the target, not by `"required": true`
+  on each field, which JSON Schema does not allow.
+
 ## [2.0.4] — 2026-11-03
 
 ### Fixed
@@ -114,7 +122,8 @@ The first release.
   its RRDs through Perl's RRDs module.
 - A systemd unit.
 
-[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.4...HEAD
+[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.5...HEAD
+[2.0.5]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.1...v2.0.2
