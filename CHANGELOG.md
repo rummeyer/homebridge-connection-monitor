@@ -6,6 +6,11 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Dashboard, Home look: the smoke is dark instead of white, which looked
+  like fog on the glass, and the loss colours of the median are brighter.
+
 ## [2.0.2] — 2026-11-02
 
 ### Changed

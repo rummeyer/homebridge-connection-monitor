@@ -23,13 +23,14 @@
    * Smokeping's loss colours, quieter: none, a little, much, nearly all.
    * Under half a percent counts as none, as Smokeping rounds it: averaged
    * over hours, a single lost ping would otherwise colour a whole stretch.
+   * The colours are the page's --loss-* variables, brighter in the Home look.
    */
   const LOSS = [
-    { upTo: 0.005, color: '#2e9e5b', label: 'no loss' },
-    { upTo: 0.05, color: '#2f80ed', label: 'up to 5 %' },
-    { upTo: 0.2, color: '#c9822a', label: 'up to 20 %' },
-    { upTo: 0.99, color: '#d64545', label: 'more' },
-    { upTo: 1, color: '#7d1f1f', label: 'no answer' },
+    { upTo: 0.005, color: 'var(--loss-none)', label: 'no loss' },
+    { upTo: 0.05, color: 'var(--loss-little)', label: 'up to 5 %' },
+    { upTo: 0.2, color: 'var(--loss-much)', label: 'up to 20 %' },
+    { upTo: 0.99, color: 'var(--loss-more)', label: 'more' },
+    { upTo: 1, color: 'var(--loss-all)', label: 'no answer' },
   ];
 
   /** The time axis per range: a line every so often, and what it says. Midnight says the day. */
@@ -288,12 +289,12 @@
         return;
       }
       if (p.median === null) {
-        chart.append(svg('rect', { x: left + i * slot, y: 6, width: Math.max(slot, 1.5), height: 4, fill: lossColor(1) }));
+        chart.append(svg('rect', { x: left + i * slot, y: 6, width: Math.max(slot, 1.5), height: 4, style: `fill: ${lossColor(1)}` }));
         return;
       }
       chart.append(svg('line', {
         x1: left + i * slot, x2: left + (i + 1) * slot + 0.4, y1: y(p.median), y2: y(p.median),
-        stroke: lossColor(p.loss), 'stroke-width': 2, 'stroke-linecap': 'butt',
+        style: `stroke: ${lossColor(p.loss)}`, 'stroke-width': 2, 'stroke-linecap': 'butt',
       }));
     });
 

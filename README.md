@@ -39,7 +39,7 @@ Nothing to install beside it: the pings go out through the system's own
 `ping`, and the data is kept in **SQLite**, which comes with Node.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/dashboard-home.png" alt="The dashboard in the Home look: tiles for Router (0.80 ms), Internet (13.4 ms) and Diskstation (0.23 ms), all Good, and below them 24-hour charts of each, the median a green line in the smoke of the pings, the Diskstation a red line of no answer until it was switched on in the morning" width="760">
+  <img src="https://raw.githubusercontent.com/rummeyer/homebridge-connection-monitor/main/docs/dashboard-home.png" alt="The dashboard in the Home look: tiles for Router (0.71 ms), Internet (12.9 ms) and Diskstation (0.19 ms), all Good, and below them 24-hour charts of each, the median a bright green line in the dark smoke of the pings, the Diskstation a red line of no answer between yesterday afternoon and when it was switched on again" width="760">
 </p>
 
 ## Contents
@@ -114,7 +114,9 @@ year:
   loss.
 
 **Three looks**, as Appliance Monitor's and Synology Monitor's dashboards:
-Home, light and dark, switched by the button in the header.
+Home, light and dark, switched by the button in the header. In the Home
+look the smoke is a shadow on the glass and the lines are brighter, so the
+median stands out from the wallpaper.
 
 <p align="center">
   <picture>

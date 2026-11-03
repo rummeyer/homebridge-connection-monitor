@@ -23,6 +23,7 @@
       --run: #2e9e5b; --run-bg: rgba(46,158,91,.12); --off: #b0b6bf; --warn: #c9822a; --bad: #d64545; --accent: #2f80ed;
       --dark-bg: #15181c; --dark-card: #1f2329; --dark-text: #e6e8eb; --dark-muted: #949ba6; --dark-line: rgba(160,160,160,.18);
       --dark-run: #4cc27e; --dark-run-bg: rgba(76,194,126,.14); --dark-off: #5b626c;
+      --loss-none: #2e9e5b; --loss-little: #2f80ed; --loss-much: #c9822a; --loss-more: #d64545; --loss-all: #7d1f1f;
     }
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
@@ -100,6 +101,7 @@
       --bg: #6b5338; --card: rgba(58,50,42,.46); --text: #fff; --muted: rgba(255,255,255,.62); --line: rgba(255,255,255,.16);
       --run: #fff; --run-bg: rgba(255,255,255,.18); --off: rgba(255,255,255,.4); --warn: #ffb340; --bad: #ff6961; --accent: #f9cf3d;
       --home: #f9cf3d;
+      --loss-none: #30d158; --loss-little: #0a84ff; --loss-much: #ff9f0a; --loss-more: #ff453a; --loss-all: #ff2d55;
     }
     [data-theme="home"] body::before {
       content: ""; position: fixed; inset: 0; z-index: -1;
@@ -180,6 +182,8 @@
     [data-theme="home"] .ranges { background: rgba(255,255,255,.14); }
     [data-theme="home"] .ranges button[aria-pressed="true"] { background: rgba(255,255,255,.9); color: #1c1c1e; }
     [data-theme="home"] .chart { border-radius: 22px; padding: 16px 18px 12px; }
+    /* On the glass white smoke is fog: a shadow instead, under brighter lines. */
+    [data-theme="home"] .chart .smoke { fill: #000; }
     [data-theme="home"] .scale { color: rgba(255,255,255,.85); text-shadow: 0 1px 6px rgba(0,0,0,.3); }
   </style>
   <script src="dashboard.js" defer></script>
