@@ -6,6 +6,8 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.7] — 2026-11-09
+
 ### Documentation
 
 - **More ideas for automations**: who is home, something switched on or
@@ -134,7 +136,8 @@ The first release.
   its RRDs through Perl's RRDs module.
 - A systemd unit.
 
-[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.6...HEAD
+[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.7...HEAD
+[2.0.7]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.3...v2.0.4
