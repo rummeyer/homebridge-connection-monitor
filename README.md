@@ -87,12 +87,58 @@ within a few seconds.
 
 ### Ideas for automations
 
-- **Someone is home**: a phone's sensor turns occupied as it joins the Wi-Fi.
-  Set its address to stay the same in the router, and keep in mind that a
-  sleeping iPhone may not answer pings for a while.
-- **The internet is down**: the sensor of `8.8.4.4` or `1.1.1.1` is not
-  occupied — restart the router through a smart plug.
-- **The NAS came on**: occupied — switch on what depends on it.
+HomeKit only sees whether something answers, so each idea is a device coming
+or going. Two things help with all of them:
+
+- **Give the device a fixed address** in the router, and on an iPhone turn
+  off *Private Wi-Fi Address* for your own network, or its address changes.
+- **Turn on notifications** for a sensor in its settings in the Home app, to
+  be told when it goes or comes back without any automation.
+
+The Home app can only start an automation from a sensor. A condition on
+another sensor ("only if the router answers"), or a wait in between, needs
+a Shortcut in the automation, or an app such as Eve or Controller.
+
+**Who is home**
+
+- **Someone came home**: a phone's sensor turns occupied as it joins the
+  Wi-Fi — lights on in the hall after dark, the heating up.
+- **The children are back from school**: their phone or tablet answers —
+  a notification to you at work.
+- **A guest is here**: a phone you added for the weekend — the guest room's
+  heating on.
+- Keep in mind that a sleeping iPhone may not answer pings for a while.
+  Use it to say someone came, not that someone left: for that the Home app's
+  own *last person leaves* is more reliable.
+
+**Something was switched on or off**
+
+- **The TV or games console came on**: the lights dim to a film scene, the
+  soundbar's plug comes on. Off again — the soundbar's plug goes off too, so
+  it draws nothing in standby.
+- **The computer is on**: the desk lamp and the plug of the monitors and
+  speakers come on. Once it has shut down, they go off.
+- **The NAS came on**: switch on what depends on it, a backup disk's plug,
+  say. Still answering at midnight — a notification that it was left on.
+- **The printer answers**: it was switched on — after an hour, turn its plug
+  off again in case it is forgotten.
+
+**The network**
+
+- **The internet is down**: the sensor of `1.1.1.1` or `8.8.4.4` is not
+  occupied — restart the router through a smart plug: off, a Shortcut waiting
+  30 seconds, on again.
+- **The router or the internet**: if the router still answers but the
+  internet does not, it is the provider, and a restart may not help; if the
+  router does not answer either, it is at home. Add both, and see on the
+  dashboard which one it was.
+- **A mesh node, repeater or switch went away**: restart it through its
+  plug, as the router.
+- **A hub stopped answering**: a Hue bridge, a Zigbee gateway, a camera, the
+  machine another smart home runs on — a notification, or a restart through
+  its plug, before the lights behind it stop working.
+- **A server came back after a power cut**: occupied again — a notification
+  that everything is back.
 
 ## Dashboard
 

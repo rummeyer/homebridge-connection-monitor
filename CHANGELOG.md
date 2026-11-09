@@ -6,6 +6,11 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Documentation
+
+- **More ideas for automations**: who is home, something switched on or
+  off, and the network, with what helps all of them.
+
 ## [2.0.6] — 2026-11-09
 
 ### Documentation
