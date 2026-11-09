@@ -54,6 +54,7 @@ Nothing to install beside it: the pings go out through the system's own
 - [Coming from Smokeping](#coming-from-smokeping)
 - [Coming from Connection Monitor 1](#coming-from-connection-monitor-1)
 - [Troubleshooting](#troubleshooting)
+- [More monitors](#more-monitors)
 - [Support](#support)
 - [Credits](#credits)
 - [Licence](#licence)
@@ -274,6 +275,23 @@ skip pings. A whole minute without an answer clears the sensor; set
 **The dashboard does not open**: is **Dashboard** ticked, and the child
 bridge restarted since? The log says `Dashboard on port 8584` when it is up,
 or why the port could not be used.
+
+## More monitors
+
+This plugin is one of a family of three Homebridge monitors, each with a
+dashboard in the same Home look:
+
+- [**Appliance Monitor**](https://github.com/rummeyer/homebridge-appliance-monitor)
+  — a washing machine, dryer or coffee machine on a smart plug in the Home
+  app: Running or done, from its power draw, learned from one cycle, and
+  what it is doing in between: heating, spinning, a coffee being drawn.
+- [**Synology Monitor**](https://github.com/rummeyer/homebridge-synology-monitor)
+  — a Synology NAS in the Home app: switch it on and off, and see its
+  temperature, CPU and memory, storage health, drives and DSM updates.
+
+[**Monitor Dashboard**](https://github.com/rummeyer/monitor-dashboard) puts
+the dashboards of all three on one page, a tab each — one address for
+everything, served by Caddy on the home network.
 
 ## Support
 
