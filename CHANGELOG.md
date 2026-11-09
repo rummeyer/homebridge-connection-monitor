@@ -6,6 +6,13 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.6] — 2026-11-09
+
+### Documentation
+
+- The README tells of the other monitors in the family, and of Monitor
+  Dashboard, which shows them all on one page.
+
 ## [2.0.5] — 2026-11-03
 
 ### Fixed
@@ -122,7 +129,8 @@ The first release.
   its RRDs through Perl's RRDs module.
 - A systemd unit.
 
-[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.5...HEAD
+[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.6...HEAD
+[2.0.6]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.2...v2.0.3
