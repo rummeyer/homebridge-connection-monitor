@@ -6,6 +6,8 @@ adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.8] — 2026-11-24
+
 ### Fixed
 
 - Dashboard: in Safari the Home look's backdrop covered part of the window
@@ -143,7 +145,8 @@ The first release.
   its RRDs through Perl's RRDs module.
 - A systemd unit.
 
-[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.7...HEAD
+[Unreleased]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.8...HEAD
+[2.0.8]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/rummeyer/homebridge-connection-monitor/compare/v2.0.4...v2.0.5
